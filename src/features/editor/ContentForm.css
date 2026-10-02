@@ -118,3 +118,9 @@
     gap: 40px;
   }
 }
+
+.editor-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}

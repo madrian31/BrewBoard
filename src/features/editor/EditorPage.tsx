@@ -1,6 +1,7 @@
-import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { useContent } from '../content/useContent'
-import { createEmptyInput } from '../../constants/workflow'
+import { createEmptyInput, STATUSES } from '../../constants/workflow'
+import type { ContentStatus } from '../../types/content'
 import { isValidISODate } from '../../utils/date'
 import ContentForm from './ContentForm'
 
@@ -8,6 +9,11 @@ export default function EditorPage() {
   const { id } = useParams()
   const { getContent } = useContent()
   const [params] = useSearchParams()
+  const location = useLocation()
+
+  // Saan galing ang user? Ipinapasa ng mga Link via state={{ from }}. Default: Library.
+  const from = (location.state as { from?: unknown } | null)?.from
+  const returnTo = typeof from === 'string' && from.startsWith('/') ? from : '/library'
 
   const existing = id ? getContent(id) : undefined
 
@@ -26,6 +32,8 @@ export default function EditorPage() {
   }
 
   const date = params.get('date')
+  const statusParam = params.get('status')
+  const prefillStatus = STATUSES.find((s) => s.id === statusParam)?.id as ContentStatus | undefined
   const initial = existing
     ? {
         title: existing.title,
@@ -37,8 +45,12 @@ export default function EditorPage() {
         targetDate: existing.targetDate,
         notes: existing.notes,
       }
-    : { ...createEmptyInput(), targetDate: isValidISODate(date) ? date : '' }
+    : {
+        ...createEmptyInput(),
+        targetDate: isValidISODate(date) ? date : '',
+        ...(prefillStatus ? { status: prefillStatus } : {}),
+      }
 
   // `key` para mag-reset ang form kapag lumipat sa ibang content
-  return <ContentForm key={id ?? 'new'} id={id} initial={initial} />
+  return <ContentForm key={id ?? 'new'} id={id} initial={initial} returnTo={returnTo} />
 }

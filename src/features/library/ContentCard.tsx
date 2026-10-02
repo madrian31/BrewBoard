@@ -1,14 +1,16 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import type { Content } from '../../types/content'
 import StatusBadge from '../../components/StatusBadge'
 import { formatDate, isOverdue } from '../../utils/date'
 import './ContentCard.css'
 
 export default function ContentCard({ content }: { content: Content }) {
+  const here = useLocation()
+  const from = here.pathname + here.search
   const overdue = content.status !== 'published' && isOverdue(content.targetDate)
 
   return (
-    <Link to={`/editor/${content.id}`} className="content-card">
+    <Link to={`/editor/${content.id}`} state={{ from }} className="content-card">
       <div className="content-card-top">
         <StatusBadge status={content.status} />
         {content.targetDate && (

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useBlocker, useNavigate } from 'react-router-dom'
+import { Link, useBlocker, useNavigate } from 'react-router-dom'
 import { useContent } from '../content/useContent'
 import { PILLAR_SUGGESTIONS, PLATFORMS, STATUSES } from '../../constants/workflow'
 import type { ContentInput, ContentStatus, Platform } from '../../types/content'
@@ -9,9 +9,11 @@ import './ContentForm.css'
 interface Props {
   id?: string
   initial: ContentInput
+  /** Saan babalik pagkatapos mag-create o mag-delete */
+  returnTo: string
 }
 
-export default function ContentForm({ id, initial }: Props) {
+export default function ContentForm({ id, initial, returnTo }: Props) {
   const navigate = useNavigate()
   const { addContent, updateContent, deleteContent } = useContent()
 
@@ -65,11 +67,11 @@ export default function ContentForm({ id, initial }: Props) {
       setBaseline(clean)
       setDraft(clean)
     } else {
-      const created = addContent(clean)
+      addContent(clean)
       allowLeave.current = true
-      navigate(`/editor/${created.id}`, { replace: true })
+      navigate(returnTo, { replace: true })
     }
-  }, [canSave, draft, id, addContent, updateContent, navigate])
+  }, [canSave, draft, id, addContent, updateContent, navigate, returnTo])
 
   // Ctrl/Cmd + S para mag-save
   useEffect(() => {
@@ -88,7 +90,7 @@ export default function ContentForm({ id, initial }: Props) {
     if (confirm(`Delete "${draft.title || 'this content'}"? This can't be undone.`)) {
       allowLeave.current = true
       deleteContent(id)
-      navigate('/library')
+      navigate(returnTo)
     }
   }
 
@@ -97,9 +99,14 @@ export default function ContentForm({ id, initial }: Props) {
   return (
     <div className="page editor">
       <div className="editor-bar">
-        <span className="meta editor-state">
-          {isDirty ? <span className="unsaved">Unsaved changes</span> : id ? 'Saved' : 'New content'}
-        </span>
+        <div className="editor-left">
+          <Link to={returnTo} className="btn btn-small">
+            Back
+          </Link>
+          <span className="meta editor-state">
+            {isDirty ? <span className="unsaved">Unsaved changes</span> : id ? 'Saved' : 'New content'}
+          </span>
+        </div>
         <div className="editor-actions">
           {id && (
             <button type="button" className="btn btn-danger btn-small" onClick={remove}>

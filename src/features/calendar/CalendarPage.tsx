@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useContent } from '../content/useContent'
 import type { Content } from '../../types/content'
 import { toISO, todayISO } from '../../utils/date'
@@ -9,6 +9,8 @@ const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 export default function CalendarPage() {
   const { items } = useContent()
+  const here = useLocation()
+  const from = here.pathname + here.search
   const today = todayISO()
   const [cursor, setCursor] = useState(() => {
     const [y, m] = today.split('-').map(Number)
@@ -89,7 +91,7 @@ export default function CalendarPage() {
             >
               <div className="cal-day">
                 <span className="cal-num">{day}</span>
-                <Link to={`/editor?date=${iso}`} className="cal-add" aria-label={`Add content on ${iso}`}>
+                <Link to={`/editor?date=${iso}`} state={{ from }} className="cal-add" aria-label={`Add content on ${iso}`}>
                   +
                 </Link>
               </div>
@@ -97,6 +99,7 @@ export default function CalendarPage() {
                 <Link
                   key={c.id}
                   to={`/editor/${c.id}`}
+                  state={{ from }}
                   className="cal-item"
                   data-status={c.status}
                   title={c.title}
@@ -115,7 +118,9 @@ export default function CalendarPage() {
           <ul>
             {unscheduled.map((c) => (
               <li key={c.id}>
-                <Link to={`/editor/${c.id}`}>{c.title}</Link>
+                <Link to={`/editor/${c.id}`} state={{ from }}>
+                  {c.title}
+                </Link>
               </li>
             ))}
           </ul>

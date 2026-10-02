@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import { useContent } from '../content/useContent'
 import { STATUSES } from '../../constants/workflow'
 import type { ContentStatus } from '../../types/content'
@@ -9,6 +9,8 @@ import './LibraryPage.css'
 export default function LibraryPage() {
   const { items } = useContent()
   const [params, setParams] = useSearchParams()
+  const here = useLocation()
+  const from = here.pathname + here.search
   const [query, setQuery] = useState('')
   const [pillar, setPillar] = useState('')
 
@@ -89,7 +91,7 @@ export default function LibraryPage() {
       {items.length === 0 ? (
         <div className="empty">
           <p>Every Cup of Coffee lives here, from first idea to published.</p>
-          <Link to="/editor" className="btn btn-primary">
+          <Link to="/editor" state={{ from }} className="btn btn-primary">
             Create your first content
           </Link>
         </div>

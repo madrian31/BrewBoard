@@ -1,3 +1,4 @@
+import * as XLSX from 'xlsx'
 import { PLATFORMS, STATUSES } from '../../constants/workflow'
 import type { ContentInput, ContentStatus, Platform } from '../../types/content'
 import { parseCsv } from '../../utils/csv'
@@ -151,4 +152,12 @@ export function parseJsonImport(text: string): ImportParse {
   }
   result.recognized = result.inputs.length ? ['JSON backup'] : []
   return result
+}
+
+/** I-convert ang unang sheet ng Excel file sa CSV, tapos gamitin ang existing parser. */
+export function parseXlsxImport(buffer: ArrayBuffer): ImportParse {
+  const wb = XLSX.read(buffer, { type: 'array' })
+  const sheet = wb.Sheets[wb.SheetNames[0]]
+  if (!sheet) return { inputs: [], recognized: [], ignored: [], skippedEmpty: 0 }
+  return parseCsvImport(XLSX.utils.sheet_to_csv(sheet))
 }

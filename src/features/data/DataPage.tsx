@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { useContent } from '../content/useContent'
 import { downloadFile } from '../../utils/download'
 import { todayISO } from '../../utils/date'
-import { parseCsvImport, parseJsonImport, type ImportParse } from './importers'
+import { parseCsvImport, parseJsonImport, parseXlsxImport, type ImportParse } from './importers'
 import './DataPage.css'
 
 interface Notice {
@@ -28,9 +28,14 @@ export default function DataPage() {
     if (!file) return
     setIgnored([])
     try {
-      const text = await file.text()
-      const isJson = file.name.toLowerCase().endsWith('.json')
-      const parsed: ImportParse = isJson ? parseJsonImport(text) : parseCsvImport(text)
+      const name = file.name.toLowerCase()
+      const isJson = name.endsWith('.json')
+      const isExcel = name.endsWith('.xlsx') || name.endsWith('.xls')
+      const parsed: ImportParse = isExcel
+        ? parseXlsxImport(await file.arrayBuffer())
+        : isJson
+          ? parseJsonImport(await file.text())
+          : parseCsvImport(await file.text())
 
       if (parsed.recognized.length === 0) {
         setNotice({
@@ -49,7 +54,7 @@ export default function DataPage() {
       if (parsed.skippedEmpty) bits.push(`${parsed.skippedEmpty} empty ${parsed.skippedEmpty === 1 ? 'row' : 'rows'}`)
       setNotice({ kind: 'ok', text: bits.join(', ') + '.' })
     } catch {
-      setNotice({ kind: 'error', text: "Couldn't read this file. Make sure it's a CSV or JSON." })
+      setNotice({ kind: 'error', text: "Couldn't read this file. Make sure it's a CSV, Excel, or JSON file." })
     } finally {
       if (fileRef.current) fileRef.current.value = ''
     }
@@ -67,7 +72,7 @@ export default function DataPage() {
       <section className="data-block">
         <h2>Import from Google Sheets</h2>
         <ol className="data-steps">
-          <li>In Google Sheets: File, Download, Comma-separated values (.csv).</li>
+          <li>In Google Sheets: File, Download, Comma-separated values (.csv) or Microsoft Excel (.xlsx).</li>
           <li>
             Choose the file here. Columns recognized: Topic or Title, Script, Quote, Status, Pillar,
             Platform, Target Date, Notes.
@@ -76,7 +81,7 @@ export default function DataPage() {
         <input
           ref={fileRef}
           type="file"
-          accept=".csv,.tsv,.json,text/csv"
+          accept=".csv,.tsv,.xlsx,.xls,.json,text/csv"
           hidden
           aria-label="Import file"
           onChange={(e) => onFile(e.target.files?.[0])}

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useContent } from '../content/useContent'
 import { STATUSES } from '../../constants/workflow'
 import StatusBadge from '../../components/StatusBadge'
@@ -7,6 +7,8 @@ import './DashboardPage.css'
 
 export default function DashboardPage() {
   const { items } = useContent()
+  const here = useLocation()
+  const from = here.pathname + here.search
 
   const nextUp = items
     .filter((c) => c.status !== 'published' && c.targetDate)
@@ -45,7 +47,7 @@ export default function DashboardPage() {
         {nextUp.length === 0 ? (
           <div className="empty">
             <p>Add a target date to a piece of content and it will appear here.</p>
-            <Link to="/editor" className="btn btn-primary">
+            <Link to="/editor" state={{ from }} className="btn btn-primary">
               New content
             </Link>
           </div>
@@ -55,7 +57,7 @@ export default function DashboardPage() {
               const overdue = isOverdue(c.targetDate)
               return (
                 <li key={c.id}>
-                  <Link to={`/editor/${c.id}`} className="next-item">
+                  <Link to={`/editor/${c.id}`} state={{ from }} className="next-item">
                     <span className={overdue ? 'next-date overdue' : 'next-date'}>
                       {overdue ? 'Overdue · ' : ''}
                       {formatDate(c.targetDate)}
