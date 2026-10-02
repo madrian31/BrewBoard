@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useContent } from '../content/useContent'
 import { downloadFile } from '../../utils/download'
 import { todayISO } from '../../utils/date'
+import { downloadTemplate } from './templateFile'
 import { parseCsvImport, parseJsonImport, parseXlsxImport, type ImportParse } from './importers'
 import './DataPage.css'
 
@@ -84,10 +85,13 @@ export default function DataPage() {
       <section className="data-block">
         <h2>Import from Google Sheets</h2>
         <ol className="data-steps">
-          <li>In Google Sheets: File, Download, Comma-separated values (.csv) or Microsoft Excel (.xlsx).</li>
+          <li>
+            Download the template and fill it in, or use your own sheet (in Google Sheets: File,
+            Download, .csv or .xlsx).
+          </li>
           <li>
             Choose the file here. Columns recognized: Topic or Title, Script, Quote, Status, Pillar,
-            Platform, Target Date, Notes.
+            Platform, Target Date, Hot, Notes.
           </li>
         </ol>
         <input
@@ -98,9 +102,14 @@ export default function DataPage() {
           aria-label="Import file"
           onChange={(e) => onFile(e.target.files?.[0])}
         />
-        <button type="button" className="btn btn-primary" onClick={() => fileRef.current?.click()}>
-          Choose file
-        </button>
+        <div className="data-actions">
+          <button type="button" className="btn btn-primary" onClick={() => fileRef.current?.click()}>
+            Choose file
+          </button>
+          <button type="button" className="btn" onClick={downloadTemplate}>
+            Download template
+          </button>
+        </div>
 
         {notice && (
           <p role="status" className={notice.kind === 'ok' ? 'notice ok' : 'notice error'}>

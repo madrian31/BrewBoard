@@ -166,5 +166,5 @@ export function parseXlsxImport(buffer: ArrayBuffer): ImportParse {
   const wb = XLSX.read(buffer, { type: 'array' })
   const sheet = wb.Sheets[wb.SheetNames[0]]
   if (!sheet) return { inputs: [], recognized: [], ignored: [], skippedEmpty: 0 }
-  return parseCsvImport(XLSX.utils.sheet_to_csv(sheet))
+  return parseCsvImport(XLSX.utils.sheet_to_csv(sheet, { blankrows: false, dateNF: 'yyyy-mm-dd' }))
 }
