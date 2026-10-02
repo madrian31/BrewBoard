@@ -81,3 +81,12 @@
     grid-column: 1 / -1;
   }
 }
+
+.import-notice {
+  margin: 0 0 32px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  color: var(--s-idea);
+  font-weight: 500;
+}

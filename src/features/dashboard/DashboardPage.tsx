@@ -9,6 +9,8 @@ export default function DashboardPage() {
   const { items } = useContent()
   const here = useLocation()
   const from = here.pathname + here.search
+  const rawNotice = (here.state as { notice?: unknown } | null)?.notice
+  const importNotice = typeof rawNotice === 'string' ? rawNotice : null
 
   const nextUp = items
     .filter((c) => c.status !== 'published' && c.targetDate)
@@ -29,6 +31,12 @@ export default function DashboardPage() {
               : 'Your whole pipeline, at a glance.'}
         </p>
       </header>
+
+      {importNotice && (
+        <p role="status" className="import-notice">
+          Import done: {importNotice}
+        </p>
+      )}
 
       <section aria-label="Pipeline" className="pipeline">
         {STATUSES.map((s) => {

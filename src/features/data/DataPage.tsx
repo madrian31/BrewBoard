@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useContent } from '../content/useContent'
 import { downloadFile } from '../../utils/download'
 import { todayISO } from '../../utils/date'
@@ -10,7 +11,11 @@ interface Notice {
   text: string
 }
 
+/** Saan pupunta pagkatapos ng matagumpay na import. Palitan kung iba ang route ng Dashboard. */
+const AFTER_IMPORT_PATH = '/'
+
 export default function DataPage() {
+  const navigate = useNavigate()
   const { items, importContent } = useContent()
   const fileRef = useRef<HTMLInputElement>(null)
   const [notice, setNotice] = useState<Notice | null>(null)
@@ -52,7 +57,14 @@ export default function DataPage() {
       const bits = [`${added} imported`]
       if (duplicates) bits.push(`${duplicates} skipped (already exist)`)
       if (parsed.skippedEmpty) bits.push(`${parsed.skippedEmpty} empty ${parsed.skippedEmpty === 1 ? 'row' : 'rows'}`)
-      setNotice({ kind: 'ok', text: bits.join(', ') + '.' })
+      const summary = bits.join(', ') + '.'
+      if (added > 0) {
+        // May bagong pumasok: ihatid sa Dashboard kasama ang buod
+        navigate(AFTER_IMPORT_PATH, { state: { notice: summary } })
+        return
+      }
+      // Wala namang bago (puro duplicate/empty): manatili rito at ipaliwanag
+      setNotice({ kind: 'ok', text: summary })
     } catch {
       setNotice({ kind: 'error', text: "Couldn't read this file. Make sure it's a CSV, Excel, or JSON file." })
     } finally {
