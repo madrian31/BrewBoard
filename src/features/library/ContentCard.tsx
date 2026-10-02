@@ -21,12 +21,14 @@ export default function ContentCard({ content }: { content: Content }) {
         )}
       </div>
 
-      <h2 className="content-card-title">{content.title || 'Walang title'}</h2>
+      <h2 className="content-card-title">
+        {content.hot && <span aria-label="Hot content" role="img">🔥 </span>}
+        {content.title || 'Walang title'}
+      </h2>
 
       {content.quote && <p className="content-card-quote">{content.quote}</p>}
 
       <div className="content-card-foot">
-        {content.hot && <span className="chip chip-hot">Hot</span>}
         {content.pillar && <span className="chip">{content.pillar}</span>}
         {content.platforms.map((p) => (
           <span key={p} className="chip chip-plain">

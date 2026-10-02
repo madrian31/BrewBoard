@@ -101,7 +101,7 @@ export default function LibraryPage() {
             aria-pressed={hotOnly}
             onClick={() => updateParam('hot', hotOnly ? '' : '1')}
           >
-            Hot only ({hotCount})
+            🔥 Hot only ({hotCount})
           </button>
         </div>
       )}

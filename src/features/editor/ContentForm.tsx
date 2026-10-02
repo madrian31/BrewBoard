@@ -176,7 +176,7 @@ export default function ContentForm({ id, initial, returnTo }: Props) {
                 checked={!!draft.hot}
                 onChange={(e) => set('hot', e.target.checked)}
               />
-              Hot content
+              🔥 Hot content
             </label>
             <span className="meta">Mark pieces you think will perform well.</span>
           </div>

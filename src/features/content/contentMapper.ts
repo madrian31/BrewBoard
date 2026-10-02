@@ -25,6 +25,7 @@ export function docToContent(id: string, data: Record<string, unknown>): Content
     platforms: PLATFORMS.filter((p) => rawPlatforms.includes(p)),
     targetDate: str(data.targetDate),
     notes: str(data.notes),
+    hot: data.hot === true,
     createdAt,
     updatedAt: str(data.updatedAt) || createdAt,
   }
