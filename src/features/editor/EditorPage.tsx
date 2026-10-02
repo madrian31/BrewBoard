@@ -44,10 +44,12 @@ export default function EditorPage() {
         platforms: existing.platforms,
         targetDate: existing.targetDate,
         notes: existing.notes,
+        hot: existing.hot ?? false,
       }
     : {
         ...createEmptyInput(),
         targetDate: isValidISODate(date) ? date : '',
+        hot: false,
         ...(prefillStatus ? { status: prefillStatus } : {}),
       }
 

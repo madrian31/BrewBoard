@@ -170,6 +170,18 @@ export default function ContentForm({ id, initial, returnTo }: Props) {
 
         <aside className="editor-side">
           <div className="field">
+            <label className="check">
+              <input
+                type="checkbox"
+                checked={!!draft.hot}
+                onChange={(e) => set('hot', e.target.checked)}
+              />
+              Hot content
+            </label>
+            <span className="meta">Mark pieces you think will perform well.</span>
+          </div>
+
+          <div className="field">
             <label htmlFor="status">Status</label>
             <select
               id="status"

@@ -26,6 +26,7 @@ export default function ContentCard({ content }: { content: Content }) {
       {content.quote && <p className="content-card-quote">{content.quote}</p>}
 
       <div className="content-card-foot">
+        {content.hot && <span className="chip chip-hot">Hot</span>}
         {content.pillar && <span className="chip">{content.pillar}</span>}
         {content.platforms.map((p) => (
           <span key={p} className="chip chip-plain">

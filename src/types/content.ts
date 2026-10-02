@@ -16,9 +16,9 @@ export interface Content {
   status: ContentStatus
   pillar: string
   platforms: Platform[]
-  /** Format: YYYY-MM-DD, or '' kung wala pang target date */
   targetDate: string
   notes: string
+  hot?: boolean
   createdAt: string
   updatedAt: string
 }

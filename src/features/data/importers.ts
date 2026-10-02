@@ -20,6 +20,8 @@ const HEADER_ALIASES: Record<string, keyof ContentInput> = {
   'post date': 'targetDate',
   'publish date': 'targetDate',
   date: 'targetDate',
+  hot: 'hot',
+  'hot content': 'hot',
   notes: 'notes',
   note: 'notes',
 }
@@ -87,6 +89,10 @@ export function toInput(raw: Record<string, unknown>): ContentInput | null {
   if (!title && quote) title = quote.length > 60 ? `${quote.slice(0, 57)}...` : quote
   if (!title) return null
 
+  const hot =
+    raw.hot === true ||
+    ['yes', 'y', 'true', '1', 'x', 'hot'].includes(str(raw.hot).trim().toLowerCase())
+
   const status = normalizeStatus(str(raw.status)) ?? (script ? 'script_ready' : 'idea')
 
   return {
@@ -100,6 +106,7 @@ export function toInput(raw: Record<string, unknown>): ContentInput | null {
     ),
     targetDate: normalizeDate(str(raw.targetDate)),
     notes: str(raw.notes).trim(),
+    hot,
   }
 }
 

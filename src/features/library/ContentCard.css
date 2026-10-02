@@ -42,3 +42,9 @@
   margin-top: auto;
   padding-top: 4px;
 }
+
+.chip-hot {
+  background: var(--accent);
+  color: var(--paper);
+  border-color: var(--accent);
+}

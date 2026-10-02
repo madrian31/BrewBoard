@@ -15,6 +15,8 @@ export default function LibraryPage() {
   const [pillar, setPillar] = useState('')
 
   const status = (params.get('status') ?? '') as ContentStatus | ''
+  const hotOnly = params.get('hot') === '1'
+  const hotCount = items.filter((c) => c.hot).length
 
   const pillars = useMemo(
     () => [...new Set(items.map((c) => c.pillar).filter(Boolean))].sort(),
@@ -26,16 +28,24 @@ export default function LibraryPage() {
     return items
       .filter((c) => !status || c.status === status)
       .filter((c) => !pillar || c.pillar === pillar)
+      .filter((c) => !hotOnly || c.hot)
       .filter(
         (c) =>
           !q || [c.title, c.quote, c.script, c.notes].some((f) => f.toLowerCase().includes(q)),
       )
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-  }, [items, query, status, pillar])
+  }, [items, query, status, pillar, hotOnly])
+
+  // Binabago ang isang filter nang hindi nabubura ang iba
+  function updateParam(key: string, value: string) {
+    const next = new URLSearchParams(params)
+    if (value) next.set(key, value)
+    else next.delete(key)
+    setParams(next)
+  }
 
   function setStatus(next: string) {
-    if (next) setParams({ status: next })
-    else setParams({})
+    updateParam('status', next)
   }
 
   return (
@@ -85,6 +95,14 @@ export default function LibraryPage() {
               </option>
             ))}
           </select>
+          <button
+            type="button"
+            className={hotOnly ? 'btn btn-primary' : 'btn'}
+            aria-pressed={hotOnly}
+            onClick={() => updateParam('hot', hotOnly ? '' : '1')}
+          >
+            Hot only ({hotCount})
+          </button>
         </div>
       )}
 

@@ -14,6 +14,7 @@ export default function ContentRow({ content }: { content: Content }) {
     <Link to={`/editor/${content.id}`} state={{ from }} className="row">
       <div className="row-status">
         <StatusBadge status={content.status} />
+        {content.hot && <span className="chip chip-hot">Hot</span>}
       </div>
 
       <div className="row-main">
