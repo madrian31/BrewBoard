@@ -86,8 +86,7 @@ export function toInput(raw: Record<string, unknown>): ContentInput | null {
   if (!title && quote) title = quote.length > 60 ? `${quote.slice(0, 57)}...` : quote
   if (!title) return null
 
-  const status =
-    normalizeStatus(str(raw.status)) ?? (script ? 'script_ready' : 'idea')
+  const status = normalizeStatus(str(raw.status)) ?? (script ? 'script_ready' : 'idea')
 
   return {
     title,
@@ -105,7 +104,7 @@ export function toInput(raw: Record<string, unknown>): ContentInput | null {
 
 export interface ImportParse {
   inputs: ContentInput[]
-  /** Mga column na nakilala (para ipakita sa user) */
+  /** Mga column na nakilala */
   recognized: string[]
   /** Mga column na hindi nakilala at lalaktawan */
   ignored: string[]

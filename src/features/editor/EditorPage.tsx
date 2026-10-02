@@ -14,17 +14,18 @@ export default function EditorPage() {
   if (id && !existing) {
     return (
       <div className="page">
-        <h1>Hindi nahanap ang content</h1>
-        <div className="empty">
-          <p>Baka na-delete na ito.</p>
-          <Link to="/library" className="btn">
-            Bumalik sa Library
-          </Link>
-        </div>
+        <header className="page-header">
+          <h1>Content not found</h1>
+          <p className="page-sub">It may have been deleted.</p>
+        </header>
+        <Link to="/library" className="btn">
+          Back to Library
+        </Link>
       </div>
     )
   }
 
+  const date = params.get('date')
   const initial = existing
     ? {
         title: existing.title,
@@ -36,7 +37,7 @@ export default function EditorPage() {
         targetDate: existing.targetDate,
         notes: existing.notes,
       }
-    : { ...createEmptyInput(), targetDate: isValidISODate(params.get('date')) ? params.get('date')! : '' }
+    : { ...createEmptyInput(), targetDate: isValidISODate(date) ? date : '' }
 
   // `key` para mag-reset ang form kapag lumipat sa ibang content
   return <ContentForm key={id ?? 'new'} id={id} initial={initial} />

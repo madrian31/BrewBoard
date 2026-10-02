@@ -1,5 +1,10 @@
-import { initializeApp } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore'
+import { getApp, getApps, initializeApp } from 'firebase/app'
+import {
+  getFirestore,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+} from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
@@ -11,7 +16,20 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-const app = initializeApp(firebaseConfig)
+// getApps() check para hindi mag-error sa hot reload ng Vite
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig)
 
-export const db = getFirestore(app)
+function createDb() {
+  try {
+    // Offline cache: bumubukas agad ang app at gumagana kahit walang internet
+    return initializeFirestore(app, {
+      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+    })
+  } catch {
+    // Naka-initialize na (hot reload) o walang IndexedDB
+    return getFirestore(app)
+  }
+}
+
+export const db = createDb()
 export const auth = getAuth(app)

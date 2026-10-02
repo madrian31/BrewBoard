@@ -8,8 +8,13 @@ export interface ImportResult {
 
 export interface ContentContextValue {
   items: Content[]
-  /** true kapag hindi ma-save sa browser storage */
-  saveFailed: boolean
+  /** true hanggang dumating ang unang data mula sa Firestore */
+  loading: boolean
+  loadError: string | null
+  writeError: string | null
+  dismissWriteError: () => void
+  /** true habang may pagbabagong hindi pa nako-confirm ng server */
+  pending: boolean
   getContent: (id: string) => Content | undefined
   addContent: (input: ContentInput) => Content
   updateContent: (id: string, patch: Partial<ContentInput>) => void

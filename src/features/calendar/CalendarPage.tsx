@@ -26,7 +26,7 @@ export default function CalendarPage() {
 
   const unscheduled = items.filter((c) => !c.targetDate && c.status !== 'published')
 
-  // Complete weeks (Sun-Sat) covering the entire month
+  // Kumpletong linggo (Sun-Sat) na sumasaklaw sa buwan
   const firstWeekday = new Date(cursor.year, cursor.month, 1).getDay()
   const daysInMonth = new Date(cursor.year, cursor.month + 1, 0).getDate()
   const cells: (number | null)[] = [
@@ -51,14 +51,12 @@ export default function CalendarPage() {
     <div className="page calendar-page">
       <header className="page-header cal-header">
         <h1>{label}</h1>
-
         <div className="cal-nav">
-          <button className="btn" onClick={() => shift(-1)} aria-label="Previous month">
+          <button className="btn btn-small" onClick={() => shift(-1)} aria-label="Previous month">
             Prev
           </button>
-
           <button
-            className="btn"
+            className="btn btn-small"
             onClick={() => {
               const [y, m] = today.split('-').map(Number)
               setCursor({ year: y, month: m - 1 })
@@ -66,8 +64,7 @@ export default function CalendarPage() {
           >
             Today
           </button>
-
-          <button className="btn" onClick={() => shift(1)} aria-label="Next month">
+          <button className="btn btn-small" onClick={() => shift(1)} aria-label="Next month">
             Next
           </button>
         </div>
@@ -79,13 +76,10 @@ export default function CalendarPage() {
             {d}
           </div>
         ))}
-
         {cells.map((day, i) => {
           if (day === null) return <div key={`b${i}`} className="cal-cell blank" />
-
           const iso = toISO(cursor.year, cursor.month, day)
           const list = byDate.get(iso) ?? []
-
           return (
             <div
               key={iso}
@@ -94,17 +88,11 @@ export default function CalendarPage() {
               data-date={iso}
             >
               <div className="cal-day">
-                <span>{day}</span>
-
-                <Link
-                  to={`/editor?date=${iso}`}
-                  className="cal-add"
-                  aria-label={`Add content on ${iso}`}
-                >
+                <span className="cal-num">{day}</span>
+                <Link to={`/editor?date=${iso}`} className="cal-add" aria-label={`Add content on ${iso}`}>
                   +
                 </Link>
               </div>
-
               {list.map((c) => (
                 <Link
                   key={c.id}
@@ -124,7 +112,6 @@ export default function CalendarPage() {
       {unscheduled.length > 0 && (
         <section className="unscheduled">
           <h2>No target date ({unscheduled.length})</h2>
-
           <ul>
             {unscheduled.map((c) => (
               <li key={c.id}>

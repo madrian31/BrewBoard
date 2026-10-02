@@ -36,20 +36,20 @@ export default function DataPage() {
         setNotice({
           kind: 'error',
           text: isJson
-            ? 'No content was read from this JSON file.'
-            : 'No recognized columns found. Please ensure the header row contains "Topic" or "Title" and "Script".',
+            ? 'No content found in this JSON file.'
+            : 'No recognizable columns. The first row should be a header with "Topic" or "Title" and "Script".',
         })
         return
       }
 
       const { added, duplicates } = importContent(parsed.inputs)
       setIgnored(parsed.ignored)
-      const bits = [`${added} pieces of content were imported`]
-      if (duplicates) bits.push(`${duplicates} were skipped (already exist)`)
-      if (parsed.skippedEmpty) bits.push(`${parsed.skippedEmpty} The row is empty.`)
+      const bits = [`${added} imported`]
+      if (duplicates) bits.push(`${duplicates} skipped (already exist)`)
+      if (parsed.skippedEmpty) bits.push(`${parsed.skippedEmpty} empty ${parsed.skippedEmpty === 1 ? 'row' : 'rows'}`)
       setNotice({ kind: 'ok', text: bits.join(', ') + '.' })
     } catch {
-      setNotice({ kind: 'error', text: 'Hindi mabasa ang file. Siguraduhing CSV o JSON ito.' })
+      setNotice({ kind: 'error', text: "Couldn't read this file. Make sure it's a CSV or JSON." })
     } finally {
       if (fileRef.current) fileRef.current.value = ''
     }
@@ -58,19 +58,23 @@ export default function DataPage() {
   return (
     <div className="page data-page">
       <header className="page-header">
-        <h1>Import at backup</h1>
-        <p className="page-sub">Manage your content by importing from external sources or creating backups.</p>
+        <h1>Import &amp; backup</h1>
+        <p className="page-sub">
+          Your content lives in your account. Download a backup now and then.
+        </p>
       </header>
 
       <section className="data-block">
-        <h2>Import from External Sources</h2>
+        <h2>Import from Google Sheets</h2>
         <ol className="data-steps">
-          <li>Google Sheets: File, Download, Comma-separated values ​​(.csv).</li>
-          <li>Select the file here. The columns Topic/Title, Script, Quote, Status, Pillar, Platform, Target Date, and Notes are recognized.</li>
+          <li>In Google Sheets: File, Download, Comma-separated values (.csv).</li>
+          <li>
+            Choose the file here. Columns recognized: Topic or Title, Script, Quote, Status, Pillar,
+            Platform, Target Date, Notes.
+          </li>
         </ol>
         <input
           ref={fileRef}
-          id="import-file"
           type="file"
           accept=".csv,.tsv,.json,text/csv"
           hidden
@@ -78,7 +82,7 @@ export default function DataPage() {
           onChange={(e) => onFile(e.target.files?.[0])}
         />
         <button type="button" className="btn btn-primary" onClick={() => fileRef.current?.click()}>
-          Pumili ng file
+          Choose file
         </button>
 
         {notice && (
@@ -86,14 +90,15 @@ export default function DataPage() {
             {notice.text}
           </p>
         )}
-        {ignored.length > 0 && (
-          <p className="meta">Unrecognized columns: {ignored.join(', ')}</p>
-        )}
+        {ignored.length > 0 && <p className="meta">Ignored columns: {ignored.join(', ')}</p>}
       </section>
 
       <section className="data-block">
         <h2>Backup</h2>
-        <p>Download all {items.length} pieces of content as JSON. You can import this file again later to restore your data.</p>
+        <p>
+          Downloads all {items.length} {items.length === 1 ? 'piece' : 'pieces'} as a JSON file.
+          Import it above to restore.
+        </p>
         <button className="btn" onClick={exportBackup} disabled={items.length === 0}>
           Download backup
         </button>

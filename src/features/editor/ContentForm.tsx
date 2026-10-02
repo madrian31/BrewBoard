@@ -21,12 +21,13 @@ export default function ContentForm({ id, initial }: Props) {
   const isDirty = JSON.stringify(draft) !== JSON.stringify(baseline)
   const canSave = draft.title.trim() !== '' && (isDirty || !id)
 
+  // true kapag sinadya nating umalis (pagkatapos mag-save/delete), para hindi magtanong
   const allowLeave = useRef(false)
   const blocker = useBlocker(() => isDirty && !allowLeave.current)
 
   useEffect(() => {
     if (blocker.state !== 'blocked') return
-    if (window.confirm('There are unsaved changes. Do you still want to leave and discard them?')) {
+    if (window.confirm('You have unsaved changes. Leave and discard them?')) {
       blocker.proceed()
     } else {
       blocker.reset()
@@ -84,7 +85,7 @@ export default function ContentForm({ id, initial }: Props) {
 
   function remove() {
     if (!id) return
-    if (confirm(`Are you sure you want to delete "${draft.title || 'this content'}"? This action cannot be undone.`)) {
+    if (confirm(`Delete "${draft.title || 'this content'}"? This can't be undone.`)) {
       allowLeave.current = true
       deleteContent(id)
       navigate('/library')
@@ -95,13 +96,13 @@ export default function ContentForm({ id, initial }: Props) {
 
   return (
     <div className="page editor">
-      <header className="page-header editor-header">
-        <h1>{id ? 'Edit content' : 'New content'}</h1>
+      <div className="editor-bar">
+        <span className="meta editor-state">
+          {isDirty ? <span className="unsaved">Unsaved changes</span> : id ? 'Saved' : 'New content'}
+        </span>
         <div className="editor-actions">
-          {id && !isDirty && <span className="meta">Saved</span>}
-          {isDirty && <span className="meta unsaved">Unsaved changes</span>}
           {id && (
-            <button type="button" className="btn btn-danger" onClick={remove}>
+            <button type="button" className="btn btn-danger btn-small" onClick={remove}>
               Delete
             </button>
           )}
@@ -109,18 +110,23 @@ export default function ContentForm({ id, initial }: Props) {
             {id ? 'Save changes' : 'Create content'}
           </button>
         </div>
-      </header>
+      </div>
+
+      <h1 className="sr-only">{id ? 'Edit content' : 'New content'}</h1>
 
       <div className="editor-grid">
         <div className="editor-main">
           <div className="field">
-            <label htmlFor="title">Title</label>
-            <input
+            <label htmlFor="title" className="sr-only">
+              Title
+            </label>
+            <textarea
               id="title"
-              className="input input-title"
-              placeholder="The Saddest Thing About Time"
+              rows={2}
+              className="title-input"
+              placeholder="Untitled"
               value={draft.title}
-              onChange={(e) => set('title', e.target.value)}
+              onChange={(e) => set('title', e.target.value.replace(/\n/g, ' '))}
               autoFocus={!id}
             />
           </div>
@@ -129,9 +135,9 @@ export default function ContentForm({ id, initial }: Props) {
             <label htmlFor="quote">Quote</label>
             <textarea
               id="quote"
-              className="input script-font"
+              className="quote-input"
               rows={3}
-              placeholder="The line that will serve as the caption or thumbnail text"
+              placeholder="The line that becomes the caption or thumbnail"
               value={draft.quote}
               onChange={(e) => set('quote', e.target.value)}
             />
@@ -141,14 +147,14 @@ export default function ContentForm({ id, initial }: Props) {
             <div className="label-row">
               <label htmlFor="script">Script</label>
               <span className="meta">
-                {words} words · ~{estimateSpeakingTime(words)}
+                {words} {words === 1 ? 'word' : 'words'} · ~{estimateSpeakingTime(words)}
               </span>
             </div>
             <textarea
               id="script"
-              className="input script-font script-box"
+              className="input script-box"
               rows={16}
-              placeholder=" "
+              placeholder="Write or paste the full Cup of Coffee script"
               value={draft.script}
               onChange={(e) => set('script', e.target.value)}
             />
@@ -166,7 +172,7 @@ export default function ContentForm({ id, initial }: Props) {
             >
               {STATUSES.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.emoji} {s.label}
+                  {s.label}
                 </option>
               ))}
             </select>
@@ -222,7 +228,7 @@ export default function ContentForm({ id, initial }: Props) {
               id="notes"
               className="input"
               rows={6}
-              placeholder="Filming, editing, music, B-roll, and more"
+              placeholder="Filming, editing, music, B-roll"
               value={draft.notes}
               onChange={(e) => set('notes', e.target.value)}
             />

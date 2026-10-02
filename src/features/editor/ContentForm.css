@@ -1,9 +1,12 @@
-.editor-header {
+.editor {
+  max-width: 1120px;
+}
+.editor-bar {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 40px;
 }
 .editor-actions {
   display: flex;
@@ -11,20 +14,33 @@
   gap: 10px;
 }
 .unsaved {
-  color: var(--cherry);
+  color: var(--accent);
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 .editor-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 280px;
-  gap: 32px;
+  gap: 64px;
   align-items: start;
 }
-.editor-main,
+.editor-main {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
 .editor-side {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 24px;
+  padding-top: 8px;
 }
 
 .label-row {
@@ -33,36 +49,72 @@
   align-items: baseline;
 }
 
-.input-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  padding: 12px 14px;
+/* Walang kahon ang title at quote: parang nagsusulat sa pahina */
+.title-input,
+.quote-input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  color: var(--ink);
+  padding: 0 0 8px;
+  resize: none;
+  field-sizing: content;
 }
-.script-font {
-  font-family: var(--font-script);
-  font-size: 1.05rem;
-  line-height: 1.7;
+.title-input {
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
 }
+.quote-input {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.45rem;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+.title-input::placeholder {
+  color: var(--line-strong);
+}
+.quote-input::placeholder {
+  color: #b3ada5;
+}
+.title-input:focus,
+.quote-input:focus {
+  outline: none;
+  border-bottom-color: var(--line-strong);
+}
+
 .script-box {
-  min-height: 340px;
-  resize: vertical;
+  font-size: 1.05rem;
+  line-height: 1.75;
+  padding: 18px 20px;
+  min-height: 380px;
 }
 
 .check-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 6px;
+  gap: 10px;
+  margin-top: 4px;
 }
 .check {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-weight: 400;
+  gap: 10px;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+.check input {
+  accent-color: var(--ink);
+  width: 16px;
+  height: 16px;
 }
 
 @media (max-width: 900px) {
   .editor-grid {
     grid-template-columns: 1fr;
+    gap: 40px;
   }
 }

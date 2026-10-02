@@ -1,4 +1,7 @@
-
+/**
+ * CSV/TSV parser na kayang humawak ng quoted fields na may kuwit,
+ * bagong linya (mahabang script), at "" na escaped quote.
+ */
 export function parseCsv(input: string): string[][] {
   const text = input.replace(/^\uFEFF/, '')
   const firstLine = text.split(/\r\n|\n|\r/, 1)[0] ?? ''
@@ -48,5 +51,6 @@ export function parseCsv(input: string): string[][] {
     rows.push(row)
   }
 
+  // Alisin ang mga ganap na walang laman na row
   return rows.filter((r) => r.some((cell) => cell.trim() !== ''))
 }

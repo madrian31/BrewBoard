@@ -23,7 +23,7 @@ export default function BoardPage() {
     <div className="page board-page">
       <header className="page-header">
         <h1>Board</h1>
-        <p className="page-sub">Drag cards between columns to update their status.</p>
+        <p className="page-sub">Drag a card to its next stage.</p>
       </header>
 
       <div className="board">
@@ -34,6 +34,7 @@ export default function BoardPage() {
               key={s.id}
               className={overColumn === s.id ? 'column over' : 'column'}
               data-status={s.id}
+              aria-label={s.label}
               onDragOver={(e) => {
                 e.preventDefault()
                 setOverColumn(s.id)
@@ -44,9 +45,7 @@ export default function BoardPage() {
               onDrop={(e) => onDrop(e, s.id)}
             >
               <header className="column-head">
-                <h2>
-                  <span aria-hidden="true">{s.emoji}</span> {s.label}
-                </h2>
+                <h2>{s.label}</h2>
                 <span className="count">{cards.length}</span>
               </header>
 
@@ -64,7 +63,7 @@ export default function BoardPage() {
                     onMove={(status) => moveStatus(c.id, status)}
                   />
                 ))}
-                {cards.length === 0 && <p className="column-empty">No content to display</p>}
+                {cards.length === 0 && <p className="column-empty">Empty</p>}
               </div>
             </section>
           )
@@ -100,19 +99,19 @@ function BoardCard({ content, dragging, onDragStart, onDragEnd, onMove }: CardPr
         {content.title || 'Untitled'}
       </Link>
 
-      <div className="board-card-meta">
-        {content.pillar && <span className="chip">{content.pillar}</span>}
-        {content.targetDate && (
-          <span className={overdue ? 'meta overdue' : 'meta'}>
-            {formatDate(content.targetDate)}
-          </span>
-        )}
-      </div>
+      {(content.pillar || content.targetDate) && (
+        <p className="board-card-meta">
+          {content.pillar && <span className="chip">{content.pillar}</span>}
+          {content.targetDate && (
+            <span className={overdue ? 'chip overdue' : 'chip'}>{formatDate(content.targetDate)}</span>
+          )}
+        </p>
+      )}
 
       {/* Pamalit sa drag para sa phone/touch */}
       <select
         className="move-select"
-        aria-label={`Ilipat ang ${content.title}`}
+        aria-label={`Move ${content.title || 'untitled'}`}
         value={content.status}
         onChange={(e) => onMove(e.target.value as ContentStatus)}
       >

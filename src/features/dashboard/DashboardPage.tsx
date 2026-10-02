@@ -11,49 +11,40 @@ export default function DashboardPage() {
   const nextUp = items
     .filter((c) => c.status !== 'published' && c.targetDate)
     .sort((a, b) => a.targetDate.localeCompare(b.targetDate))
-    .slice(0, 5)
+    .slice(0, 6)
 
-  const readyToRecord = items.filter((c) => c.status === 'script_ready').length
+  const ready = items.filter((c) => c.status === 'script_ready').length
 
   return (
     <div className="page">
-        <header className="page-header">
-          <h1>Dashboard</h1>
-          <p className="page-sub">
-            {items.length === 0
-              ? 'You don’t have any content yet. Start with an idea.'
-              : readyToRecord > 0
-                ? `${readyToRecord} script${readyToRecord > 1 ? 's' : ''} ready to record.`
-                : 'All your content at a glance.'}
-          </p>
-        </header>
+      <header className="page-header">
+        <h1>Dashboard</h1>
+        <p className="page-sub">
+          {items.length === 0
+            ? 'Nothing here yet. Start with a single idea.'
+            : ready > 0
+              ? `${ready} ${ready === 1 ? 'script is' : 'scripts are'} ready to record.`
+              : 'Your whole pipeline, at a glance.'}
+        </p>
+      </header>
 
-      <section aria-label="Pipeline">
-        <div className="pipeline">
-          {STATUSES.map((s) => {
-            const count = items.filter((c) => c.status === s.id).length
-            return (
-              <Link
-                key={s.id}
-                to={`/library?status=${s.id}`}
-                className="stage"
-                data-status={s.id}
-              >
-                <span className="stage-count">{count}</span>
-                <span className="stage-label">
-                  {s.emoji} {s.label}
-                </span>
-              </Link>
-            )
-          })}
-        </div>
+      <section aria-label="Pipeline" className="pipeline">
+        {STATUSES.map((s) => {
+          const count = items.filter((c) => c.status === s.id).length
+          return (
+            <Link key={s.id} to={`/library?status=${s.id}`} className="stage" data-status={s.id}>
+              <span className="stage-count">{count}</span>
+              <span className="stage-label">{s.label}</span>
+            </Link>
+          )
+        })}
       </section>
 
       <section className="next-up" aria-label="Next up">
         <h2>Next up</h2>
         {nextUp.length === 0 ? (
           <div className="empty">
-            <p>Set a target date for the content so that the next post to be published appears here.</p>
+            <p>Add a target date to a piece of content and it will appear here.</p>
             <Link to="/editor" className="btn btn-primary">
               New content
             </Link>
@@ -66,6 +57,7 @@ export default function DashboardPage() {
                 <li key={c.id}>
                   <Link to={`/editor/${c.id}`} className="next-item">
                     <span className={overdue ? 'next-date overdue' : 'next-date'}>
+                      {overdue ? 'Overdue · ' : ''}
                       {formatDate(c.targetDate)}
                     </span>
                     <span className="next-title">{c.title}</span>
