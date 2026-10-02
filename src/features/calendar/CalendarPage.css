@@ -1,0 +1,118 @@
+.calendar-page {
+  max-width: 1200px;
+}
+.cal-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.cal-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.cal-weekday {
+  padding: 8px 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--column-bg);
+  border-bottom: 1px solid var(--line);
+}
+.cal-cell {
+  min-height: 112px;
+  padding: 6px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.cal-cell:nth-child(7n) {
+  border-right: 0;
+}
+.cal-cell.blank {
+  background: var(--bg);
+}
+.cal-cell.today .cal-day span {
+  background: var(--cherry);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0 7px;
+}
+
+.cal-day {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.cal-add {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0 6px;
+  border-radius: 6px;
+  opacity: 0;
+}
+.cal-cell:hover .cal-add,
+.cal-add:focus-visible {
+  opacity: 1;
+}
+.cal-add:hover {
+  background: var(--column-bg);
+}
+
+.cal-item {
+  display: block;
+  font-size: 0.78rem;
+  line-height: 1.25;
+  padding: 3px 6px;
+  border-radius: 5px;
+  color: #fff;
+  text-decoration: none;
+  background: var(--roast);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cal-item[data-status='idea'] { --roast: var(--s-idea); }
+.cal-item[data-status='script_ready'] { --roast: var(--s-script); }
+.cal-item[data-status='recorded'] { --roast: var(--s-recorded); }
+.cal-item[data-status='edited'] { --roast: var(--s-edited); }
+.cal-item[data-status='scheduled'] { --roast: var(--s-scheduled); }
+.cal-item[data-status='published'] { --roast: var(--s-published); }
+
+.unscheduled {
+  margin-top: 28px;
+}
+.unscheduled h2 {
+  font-size: 1.05rem;
+  margin: 0 0 8px;
+}
+.unscheduled ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 700px) {
+  .cal-cell {
+    min-height: 74px;
+    padding: 4px;
+  }
+  .cal-add {
+    opacity: 1;
+  }
+}

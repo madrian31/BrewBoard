@@ -1,0 +1,200 @@
+/* ---------- Design tokens ----------
+   Ang kulay ng bawat stage ay sumusunod sa roast ng kape:
+   green bean (idea) -> dark roast (scheduled) -> coffee cherry (published). */
+:root {
+  --bg: #f3f2ee;
+  --surface: #ffffff;
+  --column-bg: #ebe9e3;
+  --line: #dedbd2;
+  --ink: #1f1a17;
+  --ink-soft: #5a524c;
+  --muted: #7b736c;
+
+  --espresso: #211613;
+  --espresso-ink: #f3ece6;
+  --espresso-muted: #a99b92;
+
+  --cherry: #a52a2a;
+
+  --s-idea: #5f7a35;
+  --s-script: #9a6a22;
+  --s-recorded: #86542c;
+  --s-edited: #66402a;
+  --s-scheduled: #47301f;
+  --s-published: #a52a2a;
+
+  --font-ui: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-script: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+
+  font-family: var(--font-ui);
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+h1,
+h2 {
+  letter-spacing: -0.01em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cherry);
+  outline-offset: 2px;
+}
+
+/* ---------- Page ---------- */
+.page {
+  max-width: 1100px;
+}
+.page-header {
+  margin-bottom: 26px;
+}
+.page-header h1 {
+  font-size: 1.8rem;
+  margin: 0;
+}
+.page-sub {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  font: inherit;
+  font-weight: 600;
+  display: inline-block;
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn:hover:not(:disabled) {
+  border-color: var(--ink-soft);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn-primary {
+  background: var(--cherry);
+  border-color: var(--cherry);
+  color: #fff;
+}
+.btn-primary:hover:not(:disabled) {
+  background: #8c2020;
+  border-color: #8c2020;
+}
+.btn-danger {
+  color: var(--cherry);
+}
+
+/* ---------- Forms ---------- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.field label,
+.field legend {
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0;
+}
+.input {
+  font: inherit;
+  width: 100%;
+  padding: 9px 12px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.input:focus {
+  border-color: var(--ink-soft);
+}
+textarea.input {
+  resize: vertical;
+}
+select.input {
+  width: auto;
+}
+.filters select.input {
+  min-width: 170px;
+}
+
+/* ---------- Small pieces ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.badge-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--roast);
+}
+.badge[data-status='idea'] { --roast: var(--s-idea); }
+.badge[data-status='script_ready'] { --roast: var(--s-script); }
+.badge[data-status='recorded'] { --roast: var(--s-recorded); }
+.badge[data-status='edited'] { --roast: var(--s-edited); }
+.badge[data-status='scheduled'] { --roast: var(--s-scheduled); }
+.badge[data-status='published'] { --roast: var(--s-published); }
+
+.chip {
+  font-size: 0.78rem;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--column-bg);
+  color: var(--ink-soft);
+}
+.chip-plain {
+  background: transparent;
+  border: 1px solid var(--line);
+}
+
+.meta {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.overdue {
+  color: var(--cherry);
+  font-weight: 600;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 28px;
+  background: var(--surface);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+}
+.empty p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
