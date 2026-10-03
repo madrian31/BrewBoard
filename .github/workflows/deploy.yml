@@ -24,6 +24,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Create env file
+        run: echo "${{ secrets.ENV_FILE }}" > .env.production
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
