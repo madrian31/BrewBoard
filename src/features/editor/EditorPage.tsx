@@ -11,7 +11,6 @@ export default function EditorPage() {
   const [params] = useSearchParams()
   const location = useLocation()
 
-  // Saan galing ang user? Ipinapasa ng mga Link via state={{ from }}. Default: Library.
   const from = (location.state as { from?: unknown } | null)?.from
   const returnTo = typeof from === 'string' && from.startsWith('/') ? from : '/library'
 
@@ -45,14 +44,17 @@ export default function EditorPage() {
         targetDate: existing.targetDate,
         notes: existing.notes,
         hot: existing.hot ?? false,
+        caption: existing.caption ?? '',
+        hashtags: existing.hashtags ?? '',
       }
     : {
         ...createEmptyInput(),
         targetDate: isValidISODate(date) ? date : '',
         hot: false,
+        caption: '',
+        hashtags: '',
         ...(prefillStatus ? { status: prefillStatus } : {}),
       }
 
-  // `key` para mag-reset ang form kapag lumipat sa ibang content
   return <ContentForm key={id ?? 'new'} id={id} initial={initial} returnTo={returnTo} />
 }

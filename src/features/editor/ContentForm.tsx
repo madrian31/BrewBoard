@@ -94,6 +94,22 @@ export default function ContentForm({ id, initial, returnTo }: Props) {
   }
 
   const words = countWords(draft.script)
+  const caption = draft.caption ?? ''
+  const hashtags = draft.hashtags ?? ''
+  const tagCount = hashtags.split(/\s+/).filter((t) => t.startsWith('#') && t.length > 1).length
+  const [copied, setCopied] = useState(false)
+
+  async function copyPost() {
+    const text = [caption.trim(), hashtags.trim()].filter(Boolean).join('\n\n')
+    if (!text) return
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    } catch {
+      alert("Couldn't copy automatically. Select the text and copy it yourself.")
+    }
+  }
 
   return (
     <div className="page editor">
@@ -164,6 +180,48 @@ export default function ContentForm({ id, initial, returnTo }: Props) {
               value={draft.script}
               onChange={(e) => set('script', e.target.value)}
             />
+          </div>
+
+          <div className="field">
+            <div className="label-row">
+              <label htmlFor="caption">Caption</label>
+              <span className="meta">{caption.length} characters</span>
+            </div>
+            <textarea
+              id="caption"
+              className="input"
+              rows={5}
+              placeholder="The caption that goes with the post"
+              value={caption}
+              onChange={(e) => set('caption', e.target.value)}
+            />
+          </div>
+
+          <div className="field">
+            <div className="label-row">
+              <label htmlFor="hashtags">Hashtags</label>
+              <span className="meta">
+                {tagCount} {tagCount === 1 ? 'hashtag' : 'hashtags'}
+              </span>
+            </div>
+            <textarea
+              id="hashtags"
+              className="input"
+              rows={2}
+              placeholder="#life #mindset #cupofcoffee"
+              value={hashtags}
+              onChange={(e) => set('hashtags', e.target.value)}
+            />
+            <div>
+              <button
+                type="button"
+                className="btn btn-small"
+                onClick={copyPost}
+                disabled={!caption.trim() && !hashtags.trim()}
+              >
+                {copied ? 'Copied' : 'Copy caption and hashtags'}
+              </button>
+            </div>
           </div>
         </div>
 

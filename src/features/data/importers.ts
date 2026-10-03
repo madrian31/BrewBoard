@@ -8,7 +8,10 @@ const HEADER_ALIASES: Record<string, keyof ContentInput> = {
   topic: 'title',
   'content title': 'title',
   quote: 'quote',
-  caption: 'quote',
+  caption: 'caption',
+  hashtags: 'hashtags',
+  hashtag: 'hashtags',
+  tags: 'hashtags',
   script: 'script',
   status: 'status',
   stage: 'status',
@@ -63,7 +66,6 @@ export function normalizeDate(value: string): string {
   const v = value.trim()
   if (!v) return ''
   if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v
-  // Kailangan may 4-digit na taon; kung wala, huhulaan ng Date ang maling taon
   if (!/\b\d{4}\b/.test(v)) return ''
   const d = new Date(v)
   if (Number.isNaN(d.getTime())) return ''
@@ -76,7 +78,6 @@ function str(v: unknown): string {
   return typeof v === 'string' ? v : ''
 }
 
-/** Gawing ContentInput ang kahit anong raw object. Null kung walang silbing laman. */
 export function toInput(raw: Record<string, unknown>): ContentInput | null {
   const script = str(raw.script).trim()
   const quote = str(raw.quote).trim()
@@ -107,14 +108,14 @@ export function toInput(raw: Record<string, unknown>): ContentInput | null {
     targetDate: normalizeDate(str(raw.targetDate)),
     notes: str(raw.notes).trim(),
     hot,
+    caption: str(raw.caption).trim(),
+    hashtags: str(raw.hashtags).trim(),
   }
 }
 
 export interface ImportParse {
   inputs: ContentInput[]
-  /** Mga column na nakilala */
   recognized: string[]
-  /** Mga column na hindi nakilala at lalaktawan */
   ignored: string[]
   skippedEmpty: number
 }
@@ -161,7 +162,6 @@ export function parseJsonImport(text: string): ImportParse {
   return result
 }
 
-/** I-convert ang unang sheet ng Excel file sa CSV, tapos gamitin ang existing parser. */
 export function parseXlsxImport(buffer: ArrayBuffer): ImportParse {
   const wb = XLSX.read(buffer, { type: 'array' })
   const sheet = wb.Sheets[wb.SheetNames[0]]

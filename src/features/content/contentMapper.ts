@@ -7,7 +7,6 @@ function str(v: unknown): string {
   return typeof v === 'string' ? v : ''
 }
 
-/** Firestore doc -> Content. Matibay laban sa kulang o maling fields. */
 export function docToContent(id: string, data: Record<string, unknown>): Content {
   const status = STATUS_IDS.includes(data.status as ContentStatus)
     ? (data.status as ContentStatus)
@@ -26,12 +25,13 @@ export function docToContent(id: string, data: Record<string, unknown>): Content
     targetDate: str(data.targetDate),
     notes: str(data.notes),
     hot: data.hot === true,
+    caption: str(data.caption),
+    hashtags: str(data.hashtags),
     createdAt,
     updatedAt: str(data.updatedAt) || createdAt,
   }
 }
 
-/** Ang id ay nasa doc path, hindi sa loob ng data. */
 export function contentToDoc(c: Content): Omit<Content, 'id'> {
   const { id, ...rest } = c
   void id

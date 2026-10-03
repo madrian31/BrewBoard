@@ -19,9 +19,10 @@ export interface Content {
   targetDate: string
   notes: string
   hot?: boolean
+  caption?: string
+  hashtags?: string
   createdAt: string
   updatedAt: string
 }
 
-/** Ang mga field na galing sa form (walang id at timestamps) */
 export type ContentInput = Omit<Content, 'id' | 'createdAt' | 'updatedAt'>

@@ -14,17 +14,7 @@ export default function ContentRow({ content }: { content: Content }) {
   const hot = !!content.hot
 
   function toggleHot() {
-    updateContent(content.id, {
-      title: content.title,
-      quote: content.quote,
-      script: content.script,
-      status: content.status,
-      pillar: content.pillar,
-      platforms: content.platforms,
-      targetDate: content.targetDate,
-      notes: content.notes,
-      hot: !hot,
-    })
+    updateContent(content.id, { hot: !hot })
   }
 
   // Ang button ay kapatid ng Link (hindi nasa loob nito), para valid at hindi nagbubukas ng editor kapag pinindot

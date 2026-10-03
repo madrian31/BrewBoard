@@ -12,7 +12,6 @@ interface Notice {
   text: string
 }
 
-/** Saan pupunta pagkatapos ng matagumpay na import. Palitan kung iba ang route ng Dashboard. */
 const AFTER_IMPORT_PATH = '/'
 
 export default function DataPage() {
@@ -60,11 +59,9 @@ export default function DataPage() {
       if (parsed.skippedEmpty) bits.push(`${parsed.skippedEmpty} empty ${parsed.skippedEmpty === 1 ? 'row' : 'rows'}`)
       const summary = bits.join(', ') + '.'
       if (added > 0) {
-        // May bagong pumasok: ihatid sa Dashboard kasama ang buod
         navigate(AFTER_IMPORT_PATH, { state: { notice: summary } })
         return
       }
-      // Wala namang bago (puro duplicate/empty): manatili rito at ipaliwanag
       setNotice({ kind: 'ok', text: summary })
     } catch {
       setNotice({ kind: 'error', text: "Couldn't read this file. Make sure it's a CSV, Excel, or JSON file." })
@@ -90,7 +87,7 @@ export default function DataPage() {
             Download, .csv or .xlsx).
           </li>
           <li>
-            Choose the file here. Columns recognized: Topic or Title, Script, Quote, Status, Pillar,
+            Choose the file here. Columns recognized: Topic or Title, Script, Quote, Caption, Hashtags, Status, Pillar,
             Platform, Target Date, Hot, Notes.
           </li>
         </ol>
