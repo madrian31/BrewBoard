@@ -18,7 +18,7 @@ export default function ContentForm({ id, initial, returnTo }: Props) {
   const { addContent, updateContent, deleteContent } = useContent()
 
   const [draft, setDraft] = useState<ContentInput>(initial)
-  const [baseline, setBaseline] = useState<ContentInput>(initial)
+  const [baseline] = useState<ContentInput>(initial)
 
   const isDirty = JSON.stringify(draft) !== JSON.stringify(baseline)
   const canSave = draft.title.trim() !== '' && (isDirty || !id)
@@ -62,15 +62,14 @@ export default function ContentForm({ id, initial, returnTo }: Props) {
   const save = useCallback(() => {
     if (!canSave) return
     const clean = { ...draft, title: draft.title.trim() }
+    // Sa pag-save (bago man o edit), bumalik sa pinanggalingan (default: Library)
+    allowLeave.current = true
     if (id) {
       updateContent(id, clean)
-      setBaseline(clean)
-      setDraft(clean)
     } else {
       addContent(clean)
-      allowLeave.current = true
-      navigate(returnTo, { replace: true })
     }
+    navigate(returnTo, { replace: true })
   }, [canSave, draft, id, addContent, updateContent, navigate, returnTo])
 
   // Ctrl/Cmd + S para mag-save
