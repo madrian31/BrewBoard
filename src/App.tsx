@@ -5,8 +5,9 @@ import { firebaseAuthService } from './features/auth/firebaseAuthService'
 import { firestoreRepository } from './features/content/firestoreRepository'
 import { routes } from './routes'
 
-// Data router (hindi <BrowserRouter>) para magamit ang useBlocker sa editor.
-const router = createBrowserRouter(routes)
+const router = createBrowserRouter(routes, {
+  basename: import.meta.env.BASE_URL,
+})
 
 export default function App() {
   return (
