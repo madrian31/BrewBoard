@@ -23,10 +23,14 @@ export default function BoardPage() {
   const hotCount = items.filter((c) => c.hot).length
   const filtering = query.trim() !== '' || pillar !== '' || hotOnly
 
-  const pillars = useMemo(
-    () => [...new Set(items.map((c) => c.pillar).filter(Boolean))].sort(),
-    [items],
-  )
+  // [pangalan, bilang] kada pillar, naka-sort ayon sa pangalan
+  const pillars = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const c of items) {
+      if (c.pillar) counts.set(c.pillar, (counts.get(c.pillar) ?? 0) + 1)
+    }
+    return [...counts.entries()].sort(([a], [b]) => a.localeCompare(b))
+  }, [items])
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -91,9 +95,9 @@ export default function BoardPage() {
             onChange={(e) => setPillar(e.target.value)}
           >
             <option value="">All pillars</option>
-            {pillars.map((p) => (
+            {pillars.map(([p, n]) => (
               <option key={p} value={p}>
-                {p}
+                {p} ({n})
               </option>
             ))}
           </select>
