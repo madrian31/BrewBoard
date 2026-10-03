@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://USERNAME.github.io/brewboard/",
+  "homepage": "https://madrian31.github.io/BrewBoard/",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
