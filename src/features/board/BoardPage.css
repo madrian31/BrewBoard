@@ -1,11 +1,27 @@
 .page.board-page {
   max-width: none;
 }
+
+/* Filters: ginagamit ang .filters / .filter-search na galing sa LibraryPage.css.
+   Inuulit dito para gumana kahit hindi pa na-load ang Library. */
+.board-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.board-filters .filter-search {
+  flex: 1 1 280px;
+}
+.board-filters select.input {
+  min-width: 170px;
+}
+
 .board {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(240px, 1fr);
-  gap: 24px;
+  grid-auto-columns: minmax(200px, 1fr);
+  gap: 18px;
   overflow-x: auto;
   padding-bottom: 16px;
   align-items: start;
@@ -38,10 +54,38 @@
   color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
+
+/* Sariling scroll ang bawat column, para hindi humaba ang buong page.
+   I-adjust ang 280px depende sa taas ng header + filters mo. */
 .column-body {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  max-height: calc(100dvh - 280px);
+  min-height: 120px;
+  overflow-y: auto;
+  padding-right: 6px;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.column-body::-webkit-scrollbar {
+  width: 6px;
+}
+.column-body::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 3px;
+}
+.column-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.board {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.column-more {
+  align-self: flex-start;
+  flex-shrink: 0;
 }
 .column-empty {
   margin: 0;
@@ -50,13 +94,14 @@
 }
 
 .board-card {
+  flex-shrink: 0;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 10px;
-  padding: 16px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   cursor: grab;
 }
 .board-card:hover {
@@ -67,9 +112,10 @@
 }
 .board-card-title {
   font-family: var(--serif);
-  font-size: 1.35rem;
-  line-height: 1.15;
+  font-size: 1.1rem;
+  line-height: 1.2;
   text-decoration: none;
+  overflow-wrap: anywhere;
 }
 .board-card-title:hover {
   text-decoration: underline;
@@ -88,4 +134,10 @@
   padding: 8px 0 0;
   margin-top: 2px;
   cursor: pointer;
+}
+
+@media (max-width: 700px) {
+  .column-body {
+    max-height: 60dvh;
+  }
 }

@@ -1,4 +1,4 @@
-import { useState, type DragEvent } from 'react'
+import { useMemo, useState, type DragEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useContent } from '../content/useContent'
 import { STATUSES } from '../../constants/workflow'
@@ -6,10 +6,54 @@ import type { Content, ContentStatus } from '../../types/content'
 import { formatDate, isOverdue } from '../../utils/date'
 import './BoardPage.css'
 
+/** Ilang card ang ipapakita sa bawat column bago mag-"Show more" */
+const COLUMN_LIMIT = 30
+
 export default function BoardPage() {
   const { items, moveStatus } = useContent()
   const [overColumn, setOverColumn] = useState<ContentStatus | null>(null)
   const [draggingId, setDraggingId] = useState<string | null>(null)
+  const [expanded, setExpanded] = useState<Set<ContentStatus>>(new Set())
+
+  // Mga filter (kapareho ng sa Library)
+  const [query, setQuery] = useState('')
+  const [pillar, setPillar] = useState('')
+  const [hotOnly, setHotOnly] = useState(false)
+
+  const hotCount = items.filter((c) => c.hot).length
+  const filtering = query.trim() !== '' || pillar !== '' || hotOnly
+
+  const pillars = useMemo(
+    () => [...new Set(items.map((c) => c.pillar).filter(Boolean))].sort(),
+    [items],
+  )
+
+  const visible = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    return items
+      .filter((c) => !pillar || c.pillar === pillar)
+      .filter((c) => !hotOnly || c.hot)
+      .filter(
+        (c) =>
+          !q || [c.title, c.quote, c.script, c.notes].some((f) => f.toLowerCase().includes(q)),
+      )
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+  }, [items, query, pillar, hotOnly])
+
+  function toggleExpanded(status: ContentStatus) {
+    setExpanded((prev) => {
+      const next = new Set(prev)
+      if (next.has(status)) next.delete(status)
+      else next.add(status)
+      return next
+    })
+  }
+
+  function clearFilters() {
+    setQuery('')
+    setPillar('')
+    setHotOnly(false)
+  }
 
   function onDrop(e: DragEvent, status: ContentStatus) {
     e.preventDefault()
@@ -23,12 +67,59 @@ export default function BoardPage() {
     <div className="page board-page">
       <header className="page-header">
         <h1>Board</h1>
-        <p className="page-sub">Drag a card to its next stage.</p>
+        <p className="page-sub">
+          {filtering
+            ? `${visible.length} of ${items.length} ${items.length === 1 ? 'piece' : 'pieces'} match your filters.`
+            : 'Drag a card to its next stage.'}
+        </p>
       </header>
+
+      {items.length > 0 && (
+        <div className="filters board-filters">
+          <input
+            type="search"
+            className="input filter-search"
+            placeholder="Search titles, quotes, scripts, notes"
+            aria-label="Search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <select
+            className="input"
+            aria-label="Filter by pillar"
+            value={pillar}
+            onChange={(e) => setPillar(e.target.value)}
+          >
+            <option value="">All pillars</option>
+            {pillars.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            className={hotOnly ? 'btn btn-primary' : 'btn'}
+            aria-pressed={hotOnly}
+            onClick={() => setHotOnly((v) => !v)}
+          >
+            🔥 Hot only ({hotCount})
+          </button>
+          {filtering && (
+            <button type="button" className="btn" onClick={clearFilters}>
+              Clear filters
+            </button>
+          )}
+        </div>
+      )}
 
       <div className="board">
         {STATUSES.map((s) => {
-          const cards = items.filter((c) => c.status === s.id)
+          const cards = visible.filter((c) => c.status === s.id)
+          const isOpen = expanded.has(s.id)
+          const shown = isOpen ? cards : cards.slice(0, COLUMN_LIMIT)
+          const hidden = cards.length - shown.length
+
           return (
             <section
               key={s.id}
@@ -50,7 +141,7 @@ export default function BoardPage() {
               </header>
 
               <div className="column-body">
-                {cards.map((c) => (
+                {shown.map((c) => (
                   <BoardCard
                     key={c.id}
                     content={c}
@@ -63,7 +154,19 @@ export default function BoardPage() {
                     onMove={(status) => moveStatus(c.id, status)}
                   />
                 ))}
-                {cards.length === 0 && <p className="column-empty">Empty</p>}
+                {cards.length === 0 && (
+                  <p className="column-empty">{filtering ? 'No matches' : 'Empty'}</p>
+                )}
+                {cards.length > COLUMN_LIMIT && (
+                  <button
+                    type="button"
+                    className="btn btn-small column-more"
+                    aria-expanded={isOpen}
+                    onClick={() => toggleExpanded(s.id)}
+                  >
+                    {isOpen ? 'Show less' : `Show ${hidden} more`}
+                  </button>
+                )}
               </div>
             </section>
           )
@@ -96,6 +199,11 @@ function BoardCard({ content, dragging, onDragStart, onDragEnd, onMove }: CardPr
       onDragEnd={onDragEnd}
     >
       <Link to={`/editor/${content.id}`} className="board-card-title">
+        {content.hot && (
+          <span role="img" aria-label="Hot content">
+            🔥{' '}
+          </span>
+        )}
         {content.title || 'Untitled'}
       </Link>
 
