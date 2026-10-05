@@ -5,7 +5,15 @@ import { useContent } from '../content/useContent'
 import { formatDate, isOverdue } from '../../utils/date'
 import './ContentRow.css'
 
-export default function ContentRow({ content }: { content: Content }) {
+interface Props {
+  content: Content
+  /** Ipakita ang checkbox (select mode) */
+  selectable?: boolean
+  selected?: boolean
+  onToggleSelect?: () => void
+}
+
+export default function ContentRow({ content, selectable, selected, onToggleSelect }: Props) {
   const here = useLocation()
   const { updateContent } = useContent()
   const from = here.pathname + here.search
@@ -19,7 +27,16 @@ export default function ContentRow({ content }: { content: Content }) {
 
   // Ang button ay kapatid ng Link (hindi nasa loob nito), para valid at hindi nagbubukas ng editor kapag pinindot
   return (
-    <div className="row-wrap">
+    <div className={selectable ? 'row-wrap selectable' : 'row-wrap'}>
+      {selectable && (
+        <input
+          type="checkbox"
+          className="row-check"
+          checked={!!selected}
+          onChange={onToggleSelect}
+          aria-label={`Select ${content.title || 'untitled'}`}
+        />
+      )}
       <Link to={`/editor/${content.id}`} state={{ from }} className="row">
         <div className="row-status">
           <StatusBadge status={content.status} />

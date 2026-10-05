@@ -87,6 +87,39 @@ export function ContentProvider({ uid, repository, children }: Props) {
     [uid, repository, commit, onWriteError],
   )
 
+  const updateMany = useCallback(
+    (ids: string[], patch: Partial<ContentInput>) => {
+      const idSet = new Set(ids)
+      // Bawat isa ay 1ms na mas luma sa nauna, para hindi magbago ang kanilang pagkakasunod-sunod
+      const base = Date.now()
+      const changed: Content[] = []
+      const next = itemsRef.current.map((c) => {
+        if (!idSet.has(c.id)) return c
+        const updated: Content = {
+          ...c,
+          ...patch,
+          updatedAt: new Date(base - changed.length).toISOString(),
+        }
+        changed.push(updated)
+        return updated
+      })
+      if (changed.length === 0) return
+      commit(next)
+      repository.saveMany(uid, changed).catch(onWriteError)
+    },
+    [uid, repository, commit, onWriteError],
+  )
+
+  const deleteMany = useCallback(
+    (ids: string[]) => {
+      if (ids.length === 0) return
+      const idSet = new Set(ids)
+      commit(itemsRef.current.filter((c) => !idSet.has(c.id)))
+      Promise.all(ids.map((id) => repository.remove(uid, id))).catch(onWriteError)
+    },
+    [uid, repository, commit, onWriteError],
+  )
+
   const moveStatus = useCallback(
     (id: string, status: ContentStatus) => updateContent(id, { status }),
     [updateContent],
@@ -134,6 +167,8 @@ export function ContentProvider({ uid, repository, children }: Props) {
       updateContent,
       deleteContent,
       moveStatus,
+      updateMany,
+      deleteMany,
       importContent,
     }),
     [
@@ -147,6 +182,8 @@ export function ContentProvider({ uid, repository, children }: Props) {
       updateContent,
       deleteContent,
       moveStatus,
+      updateMany,
+      deleteMany,
       importContent,
     ],
   )

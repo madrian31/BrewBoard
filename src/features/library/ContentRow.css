@@ -80,3 +80,16 @@
   filter: none;
   opacity: 1;
 }
+
+/* Select mode: may checkbox sa kaliwa */
+.row-wrap.selectable {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0 14px;
+}
+.row-check {
+  margin-top: 34px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--ink);
+  cursor: pointer;
+}

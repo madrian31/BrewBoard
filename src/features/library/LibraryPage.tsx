@@ -4,15 +4,21 @@ import { useContent } from '../content/useContent'
 import { STATUSES } from '../../constants/workflow'
 import type { ContentStatus } from '../../types/content'
 import ContentRow from './ContentRow'
+import BulkBar from './BulkBar'
 import './LibraryPage.css'
 
 export default function LibraryPage() {
-  const { items } = useContent()
+  const { items, updateMany, deleteMany } = useContent()
   const [params, setParams] = useSearchParams()
   const here = useLocation()
   const from = here.pathname + here.search
   const [query, setQuery] = useState('')
   const [pillar, setPillar] = useState('')
+
+  // Bulk select
+  const [selectMode, setSelectMode] = useState(false)
+  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [message, setMessage] = useState<string | null>(null)
 
   const status = (params.get('status') ?? '') as ContentStatus | ''
   const hotOnly = params.get('hot') === '1'
@@ -41,6 +47,67 @@ export default function LibraryPage() {
       )
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
   }, [items, query, status, pillar, hotOnly])
+
+  // Ang napili LANG na nakikita ngayon ang tatamaan ng bulk action (hindi ang mga nakatagong dahil sa filter)
+  const selectedIds = useMemo(
+    () => visible.filter((c) => selected.has(c.id)).map((c) => c.id),
+    [visible, selected],
+  )
+  const allSelected = visible.length > 0 && selectedIds.length === visible.length
+
+  function announce(text: string) {
+    setMessage(text)
+    window.setTimeout(() => setMessage(null), 4000)
+  }
+
+  function toggleSelectMode() {
+    setSelectMode((on) => !on)
+    setSelected(new Set())
+    setMessage(null)
+  }
+
+  function toggleOne(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  function toggleAll() {
+    setSelected(allSelected ? new Set() : new Set(visible.map((c) => c.id)))
+  }
+
+  const plural = (n: number) => `${n} ${n === 1 ? 'piece' : 'pieces'}`
+
+  function bulkMove(next: ContentStatus) {
+    updateMany(selectedIds, { status: next })
+    const label = STATUSES.find((s) => s.id === next)?.label ?? next
+    announce(`Moved ${plural(selectedIds.length)} to ${label}.`)
+  }
+
+  function bulkPillar(name: string) {
+    updateMany(selectedIds, { pillar: name })
+    announce(
+      name
+        ? `Set pillar "${name}" on ${plural(selectedIds.length)}.`
+        : `Removed the pillar from ${plural(selectedIds.length)}.`,
+    )
+  }
+
+  function bulkHot(hot: boolean) {
+    updateMany(selectedIds, { hot })
+    announce(`${hot ? 'Marked' : 'Unmarked'} ${plural(selectedIds.length)} as hot.`)
+  }
+
+  function bulkDelete() {
+    const n = selectedIds.length
+    if (!confirm(`Delete ${plural(n)}? This can't be undone.`)) return
+    deleteMany(selectedIds)
+    setSelected(new Set())
+    announce(`Deleted ${plural(n)}.`)
+  }
 
   // Binabago ang isang filter nang hindi nabubura ang iba
   function updateParam(key: string, value: string) {
@@ -109,6 +176,14 @@ export default function LibraryPage() {
           >
             🔥 Hot only ({hotCount})
           </button>
+          <button
+            type="button"
+            className={selectMode ? 'btn btn-primary' : 'btn'}
+            aria-pressed={selectMode}
+            onClick={toggleSelectMode}
+          >
+            {selectMode ? 'Done selecting' : 'Select'}
+          </button>
         </div>
       )}
 
@@ -134,13 +209,42 @@ export default function LibraryPage() {
           </button>
         </div>
       ) : (
-        <ul className="rows">
-          {visible.map((c) => (
-            <li key={c.id}>
-              <ContentRow content={c} />
-            </li>
-          ))}
-        </ul>
+        <>
+          {message && (
+            <p role="status" className="bulk-message">
+              {message}
+            </p>
+          )}
+          {selectMode && (
+            <label className="select-head">
+              <input type="checkbox" checked={allSelected} onChange={toggleAll} />
+              Select all {visible.length} shown
+            </label>
+          )}
+          <ul className="rows">
+            {visible.map((c) => (
+              <li key={c.id}>
+                <ContentRow
+                  content={c}
+                  selectable={selectMode}
+                  selected={selected.has(c.id)}
+                  onToggleSelect={() => toggleOne(c.id)}
+                />
+              </li>
+            ))}
+          </ul>
+          {selectMode && selectedIds.length > 0 && (
+            <BulkBar
+              count={selectedIds.length}
+              pillars={pillars.map(([name]) => name)}
+              onMove={bulkMove}
+              onPillar={bulkPillar}
+              onHot={bulkHot}
+              onDelete={bulkDelete}
+              onClear={() => setSelected(new Set())}
+            />
+          )}
+        </>
       )}
     </div>
   )

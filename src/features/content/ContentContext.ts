@@ -8,18 +8,18 @@ export interface ImportResult {
 
 export interface ContentContextValue {
   items: Content[]
-  /** true hanggang dumating ang unang data mula sa Firestore */
   loading: boolean
   loadError: string | null
   writeError: string | null
   dismissWriteError: () => void
-  /** true habang may pagbabagong hindi pa nako-confirm ng server */
   pending: boolean
   getContent: (id: string) => Content | undefined
   addContent: (input: ContentInput) => Content
   updateContent: (id: string, patch: Partial<ContentInput>) => void
   deleteContent: (id: string) => void
   moveStatus: (id: string, status: ContentStatus) => void
+  updateMany: (ids: string[], patch: Partial<ContentInput>) => void
+  deleteMany: (ids: string[]) => void
   importContent: (inputs: ContentInput[]) => ImportResult
 }
 
