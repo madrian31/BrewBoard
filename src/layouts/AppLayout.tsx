@@ -10,7 +10,9 @@ const NAV = [
   { to: '/library', label: 'Library', end: false },
   { to: '/board', label: 'Board', end: false },
   { to: '/calendar', label: 'Calendar', end: false },
+  { to: '/activity', label: 'Activity', end: false },
   { to: '/data', label: 'Import & backup', end: false },
+  
 ]
 
 export default function AppLayout() {

@@ -5,6 +5,7 @@ import { PILLAR_SUGGESTIONS, PLATFORMS, STATUSES } from '../../constants/workflo
 import type { ContentInput, ContentStatus, Platform } from '../../types/content'
 import { countWords, estimateSpeakingTime } from '../../utils/text'
 import PillarInput, { type PillarOption } from '../../components/PillarInput'
+import ScriptHistory from './ScriptHistory'
 import './ContentForm.css'
 
 interface Props {
@@ -16,7 +17,8 @@ interface Props {
 
 export default function ContentForm({ id, initial, returnTo }: Props) {
   const navigate = useNavigate()
-  const { items, addContent, updateContent, deleteContent } = useContent()
+  const { items, getContent, addContent, updateContent, deleteContent } = useContent()
+  const history = id ? (getContent(id)?.history ?? []) : []
 
   // Mga pillar na ginagamit na, may bilang, kasama ang mga suhestiyon na hindi pa nagagamit
   const pillarOptions = useMemo<PillarOption[]>(() => {
@@ -196,6 +198,13 @@ export default function ContentForm({ id, initial, returnTo }: Props) {
               value={draft.script}
               onChange={(e) => set('script', e.target.value)}
             />
+            {id && (
+              <ScriptHistory
+                versions={history}
+                current={draft.script}
+                onRestore={(script) => set('script', script)}
+              />
+            )}
           </div>
 
           <div className="field">

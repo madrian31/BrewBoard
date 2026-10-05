@@ -3,6 +3,8 @@ import type { Content, ContentInput, ContentStatus } from '../../types/content'
 import { uid as makeId } from '../../utils/id'
 import { ContentContext, type ContentContextValue, type ImportResult } from './ContentContext'
 import type { ContentRepository } from './contentRepository'
+import { MAX_ACTIVITY_LOG, MAX_SCRIPT_VERSIONS } from './contentMapper'
+import { describeUpdate } from './activityLog'
 
 function fingerprint(c: Pick<ContentInput, 'title' | 'script'>): string {
   return `${c.title.trim().toLowerCase()}\u0000${c.script.trim()}`
@@ -73,6 +75,28 @@ export function ContentProvider({ uid, repository, children }: Props) {
       const current = itemsRef.current.find((c) => c.id === id)
       if (!current) return
       const updated: Content = { ...current, ...patch, updatedAt: new Date().toISOString() }
+      // Itago ang lumang script bago ito mapalitan, para may mababalikan
+      if (
+        patch.script !== undefined &&
+        patch.script !== current.script &&
+        current.script.trim() !== ''
+      ) {
+        const prior = current.history ?? []
+        if (prior[0]?.script !== current.script) {
+          updated.history = [
+            { script: current.script, savedAt: current.updatedAt },
+            ...prior,
+          ].slice(0, MAX_SCRIPT_VERSIONS)
+        }
+      }
+      // Isulat sa activity log ng content na ito kung ano ang nagbago
+      const what = describeUpdate(current, patch)
+      if (what) {
+        updated.log = [{ at: updated.updatedAt, ...what }, ...(current.log ?? [])].slice(
+          0,
+          MAX_ACTIVITY_LOG,
+        )
+      }
       commit(itemsRef.current.map((c) => (c.id === id ? updated : c)))
       repository.save(uid, updated).catch(onWriteError)
     },
@@ -95,10 +119,11 @@ export function ContentProvider({ uid, repository, children }: Props) {
       const changed: Content[] = []
       const next = itemsRef.current.map((c) => {
         if (!idSet.has(c.id)) return c
-        const updated: Content = {
-          ...c,
-          ...patch,
-          updatedAt: new Date(base - changed.length).toISOString(),
+        const at = new Date(base - changed.length).toISOString()
+        const updated: Content = { ...c, ...patch, updatedAt: at }
+        const what = describeUpdate(c, patch)
+        if (what) {
+          updated.log = [{ at, ...what }, ...(c.log ?? [])].slice(0, MAX_ACTIVITY_LOG)
         }
         changed.push(updated)
         return updated

@@ -6,6 +6,7 @@ import BoardPage from './features/board/BoardPage'
 import CalendarPage from './features/calendar/CalendarPage'
 import EditorPage from './features/editor/EditorPage'
 import DataPage from './features/data/DataPage'
+import ActivityPage from './features/activity/ActivityPage'
 
 export const routes: RouteObject[] = [
   {
@@ -15,6 +16,7 @@ export const routes: RouteObject[] = [
       { path: 'library', element: <LibraryPage /> },
       { path: 'board', element: <BoardPage /> },
       { path: 'calendar', element: <CalendarPage /> },
+      { path: 'activity', element: <ActivityPage /> },
       { path: 'editor', element: <EditorPage /> },
       { path: 'editor/:id', element: <EditorPage /> },
       { path: 'data', element: <DataPage /> },
