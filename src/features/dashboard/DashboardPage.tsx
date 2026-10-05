@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useContent } from '../content/useContent'
 import { STATUSES } from '../../constants/workflow'
 import StatusBadge from '../../components/StatusBadge'
+import PillarBalance from './PillarBalance'
 import { formatDate, isOverdue } from '../../utils/date'
 import './DashboardPage.css'
 
@@ -79,6 +80,8 @@ export default function DashboardPage() {
           </ul>
         )}
       </section>
+
+      <PillarBalance items={items} />
     </div>
   )
 }
