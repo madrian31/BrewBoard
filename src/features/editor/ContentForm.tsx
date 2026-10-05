@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker, useNavigate } from 'react-router-dom'
 import { useContent } from '../content/useContent'
 import { PILLAR_SUGGESTIONS, PLATFORMS, STATUSES } from '../../constants/workflow'
 import type { ContentInput, ContentStatus, Platform } from '../../types/content'
 import { countWords, estimateSpeakingTime } from '../../utils/text'
+import PillarInput, { type PillarOption } from '../../components/PillarInput'
 import './ContentForm.css'
 
 interface Props {
@@ -15,7 +16,22 @@ interface Props {
 
 export default function ContentForm({ id, initial, returnTo }: Props) {
   const navigate = useNavigate()
-  const { addContent, updateContent, deleteContent } = useContent()
+  const { items, addContent, updateContent, deleteContent } = useContent()
+
+  // Mga pillar na ginagamit na, may bilang, kasama ang mga suhestiyon na hindi pa nagagamit
+  const pillarOptions = useMemo<PillarOption[]>(() => {
+    const counts = new Map<string, number>()
+    for (const c of items) {
+      if (c.pillar) counts.set(c.pillar, (counts.get(c.pillar) ?? 0) + 1)
+    }
+    const known = new Set([...counts.keys()].map((n) => n.toLowerCase()))
+    for (const p of PILLAR_SUGGESTIONS) {
+      if (!known.has(p.toLowerCase())) counts.set(p, 0)
+    }
+    return [...counts.entries()]
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => a.name.localeCompare(b.name))
+  }, [items])
 
   const [draft, setDraft] = useState<ContentInput>(initial)
   const [baseline] = useState<ContentInput>(initial)
@@ -61,7 +77,7 @@ export default function ContentForm({ id, initial, returnTo }: Props) {
 
   const save = useCallback(() => {
     if (!canSave) return
-    const clean = { ...draft, title: draft.title.trim() }
+    const clean = { ...draft, title: draft.title.trim(), pillar: draft.pillar.trim() }
     // Sa pag-save (bago man o edit), bumalik sa pinanggalingan (default: Library)
     allowLeave.current = true
     if (id) {
@@ -256,19 +272,13 @@ export default function ContentForm({ id, initial, returnTo }: Props) {
 
           <div className="field">
             <label htmlFor="pillar">Content pillar</label>
-            <input
+            <PillarInput
               id="pillar"
-              className="input"
-              list="pillar-options"
-              placeholder="Life / Nostalgia"
+              placeholder="Pick one or type a new pillar"
               value={draft.pillar}
-              onChange={(e) => set('pillar', e.target.value)}
+              options={pillarOptions}
+              onChange={(v) => set('pillar', v)}
             />
-            <datalist id="pillar-options">
-              {PILLAR_SUGGESTIONS.map((p) => (
-                <option key={p} value={p} />
-              ))}
-            </datalist>
           </div>
 
           <fieldset className="field">

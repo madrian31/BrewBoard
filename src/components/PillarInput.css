@@ -1,0 +1,69 @@
+.pillar-input {
+  position: relative;
+}
+.pillar-input-field {
+  width: 100%;
+  padding-right: 36px;
+}
+.pillar-input-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 36px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+}
+.pillar-input-toggle:hover {
+  color: var(--ink);
+}
+.pillar-input-list {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 280px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  scrollbar-width: thin;
+}
+.pillar-input-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 9px 10px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  cursor: pointer;
+}
+.pillar-input-option.is-active {
+  background: var(--wash);
+}
+.pillar-input-option.is-new {
+  color: var(--ink-2);
+  border-top: 1px solid var(--line);
+  border-radius: 0 0 6px 6px;
+  margin-top: 4px;
+}
+.pillar-input-check {
+  color: var(--muted);
+}
+.pillar-input-count {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
