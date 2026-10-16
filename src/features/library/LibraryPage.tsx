@@ -7,6 +7,8 @@ import ContentRow from './ContentRow'
 import BulkBar from './BulkBar'
 import './LibraryPage.css'
 
+const NO_PILLAR = '__none__'
+
 export default function LibraryPage() {
   const { items, updateMany, deleteMany } = useContent()
   const [params, setParams] = useSearchParams()
@@ -33,11 +35,13 @@ export default function LibraryPage() {
     return [...counts.entries()].sort(([a], [b]) => a.localeCompare(b))
   }, [items])
 
+  const noPillarCount = useMemo(() => items.filter((c) => !c.pillar).length, [items])
+
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase()
     return items
       .filter((c) => !status || c.status === status)
-      .filter((c) => !pillar || c.pillar === pillar)
+      .filter((c) => !pillar || (pillar === NO_PILLAR ? !c.pillar : c.pillar === pillar))
       .filter((c) => !hotOnly || c.hot)
       .filter(
         (c) =>
@@ -162,6 +166,7 @@ export default function LibraryPage() {
             onChange={(e) => setPillar(e.target.value)}
           >
             <option value="">All pillars</option>
+            {noPillarCount > 0 && <option value={NO_PILLAR}>No pillar ({noPillarCount})</option>}
             {pillars.map(([p, n]) => (
               <option key={p} value={p}>
                 {p} ({n})
