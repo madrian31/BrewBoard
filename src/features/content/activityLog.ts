@@ -3,7 +3,7 @@ import type { ActivityEntry, Content, ContentInput, ContentStatus } from '../../
 
 const FIELD_LABELS: Record<keyof ContentInput, string> = {
   title: 'title',
-  quote: 'quote',
+  topic: 'topic',
   script: 'script',
   status: 'status',
   pillar: 'pillar',

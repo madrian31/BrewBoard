@@ -36,7 +36,7 @@ export default function EditorPage() {
   const initial = existing
     ? {
         title: existing.title,
-        quote: existing.quote,
+        topic: existing.topic,
         script: existing.script,
         status: existing.status,
         pillar: existing.pillar,

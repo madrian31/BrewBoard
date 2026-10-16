@@ -41,7 +41,7 @@ export default function LibraryPage() {
       .filter((c) => !hotOnly || c.hot)
       .filter(
         (c) =>
-          !q || [c.title, c.quote, c.script, c.notes, c.caption ?? '', c.hashtags ?? ''].some((f) =>
+          !q || [c.title, c.topic, c.script, c.notes, c.caption ?? '', c.hashtags ?? ''].some((f) =>
             f.toLowerCase().includes(q),
           ),
       )
@@ -137,7 +137,7 @@ export default function LibraryPage() {
           <input
             type="search"
             className="input filter-search"
-            placeholder="Search titles, quotes, scripts, captions, notes"
+            placeholder="Search titles, topics, scripts, captions, notes"
             aria-label="Search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}

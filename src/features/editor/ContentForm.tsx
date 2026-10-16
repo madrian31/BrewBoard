@@ -172,14 +172,14 @@ export default function ContentForm({ id, initial, returnTo }: Props) {
           </div>
 
           <div className="field">
-            <label htmlFor="quote">Quote</label>
+            <label htmlFor="topic">Topic</label>
             <textarea
-              id="quote"
-              className="quote-input"
+              id="topic"
+              className="topic-input"
               rows={3}
               placeholder="The line that becomes the caption or thumbnail"
-              value={draft.quote}
-              onChange={(e) => set('quote', e.target.value)}
+              value={draft.topic}
+              onChange={(e) => set('topic', e.target.value)}
             />
           </div>
 

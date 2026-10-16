@@ -49,9 +49,9 @@
   align-items: baseline;
 }
 
-/* Walang kahon ang title at quote: parang nagsusulat sa pahina */
+/* Walang kahon ang title at topic: parang nagsusulat sa pahina */
 .title-input,
-.quote-input {
+.topic-input {
   width: 100%;
   border: 0;
   border-bottom: 1px solid transparent;
@@ -67,7 +67,7 @@
   line-height: 1.05;
   letter-spacing: -0.015em;
 }
-.quote-input {
+.topic-input {
   font-family: var(--serif);
   font-style: italic;
   font-size: 1.45rem;
@@ -77,11 +77,11 @@
 .title-input::placeholder {
   color: var(--line-strong);
 }
-.quote-input::placeholder {
+.topic-input::placeholder {
   color: #b3ada5;
 }
 .title-input:focus,
-.quote-input:focus {
+.topic-input:focus {
   outline: none;
   border-bottom-color: var(--line-strong);
 }

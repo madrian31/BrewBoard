@@ -26,7 +26,7 @@ export default function ContentCard({ content }: { content: Content }) {
         {content.title || 'Walang title'}
       </h2>
 
-      {content.quote && <p className="content-card-quote">{content.quote}</p>}
+      {content.topic && <p className="content-card-topic">{content.topic}</p>}
 
       <div className="content-card-foot">
         {content.pillar && <span className="chip">{content.pillar}</span>}

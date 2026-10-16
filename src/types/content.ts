@@ -26,7 +26,7 @@ export interface ScriptVersion {
 export interface Content {
   id: string
   title: string
-  quote: string
+  topic: string
   script: string
   status: ContentStatus
   pillar: string

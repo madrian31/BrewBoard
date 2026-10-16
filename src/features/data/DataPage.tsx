@@ -47,7 +47,7 @@ export default function DataPage() {
           kind: 'error',
           text: isJson
             ? 'No content found in this JSON file.'
-            : 'No recognizable columns. The first row should be a header with "Topic" or "Title" and "Script".',
+            : 'No recognizable columns. The first row should be a header with "Title" and "Script".',
         })
         return
       }
@@ -87,7 +87,7 @@ export default function DataPage() {
             Download, .csv or .xlsx).
           </li>
           <li>
-            Choose the file here. Columns recognized: Topic or Title, Script, Quote, Caption, Hashtags, Status, Pillar,
+            Choose the file here. Columns recognized: Title, Script, Topic, Caption, Hashtags, Status, Pillar,
             Platform, Target Date, Hot, Notes.
           </li>
         </ol>

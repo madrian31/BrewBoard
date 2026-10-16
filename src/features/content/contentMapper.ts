@@ -49,7 +49,7 @@ export function docToContent(id: string, data: Record<string, unknown>): Content
   return {
     id,
     title: str(data.title),
-    quote: str(data.quote),
+    topic: str(data.topic) || str(data.quote), // data.quote: legacy field name bago naging "topic"
     script: str(data.script),
     status,
     pillar: str(data.pillar),

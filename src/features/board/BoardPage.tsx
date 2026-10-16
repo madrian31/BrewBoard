@@ -39,7 +39,7 @@ export default function BoardPage() {
       .filter((c) => !hotOnly || c.hot)
       .filter(
         (c) =>
-          !q || [c.title, c.quote, c.script, c.notes].some((f) => f.toLowerCase().includes(q)),
+          !q || [c.title, c.topic, c.script, c.notes].some((f) => f.toLowerCase().includes(q)),
       )
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
   }, [items, query, pillar, hotOnly])
@@ -83,7 +83,7 @@ export default function BoardPage() {
           <input
             type="search"
             className="input filter-search"
-            placeholder="Search titles, quotes, scripts, notes"
+            placeholder="Search titles, topics, scripts, notes"
             aria-label="Search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}

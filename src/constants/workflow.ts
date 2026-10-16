@@ -31,7 +31,7 @@ export const PILLAR_SUGGESTIONS = [
 export function createEmptyInput(): ContentInput {
   return {
     title: '',
-    quote: '',
+    topic: '',
     script: '',
     status: 'idea',
     pillar: '',

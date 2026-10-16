@@ -44,7 +44,7 @@ export default function ContentRow({ content, selectable, selected, onToggleSele
 
         <div className="row-main">
           <h2 className="row-title">{content.title || 'Untitled'}</h2>
-          {content.quote && <p className="row-quote">{content.quote}</p>}
+          {content.topic && <p className="row-topic">{content.topic}</p>}
           {tags.length > 0 && (
             <p className="row-tags">
               {tags.map((t) => (

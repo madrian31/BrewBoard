@@ -5,9 +5,9 @@ import { parseCsv } from '../../utils/csv'
 
 const HEADER_ALIASES: Record<string, keyof ContentInput> = {
   title: 'title',
-  topic: 'title',
   'content title': 'title',
-  quote: 'quote',
+  topic: 'topic',
+  quote: 'topic',
   caption: 'caption',
   hashtags: 'hashtags',
   hashtag: 'hashtags',
@@ -80,14 +80,14 @@ function str(v: unknown): string {
 
 export function toInput(raw: Record<string, unknown>): ContentInput | null {
   const script = str(raw.script).trim()
-  const quote = str(raw.quote).trim()
+  const topic = str(raw.topic).trim()
   let title = str(raw.title).trim()
 
   if (!title && script) {
     const firstLine = script.split(/\r?\n/)[0].trim()
     title = firstLine.length > 60 ? `${firstLine.slice(0, 57)}...` : firstLine
   }
-  if (!title && quote) title = quote.length > 60 ? `${quote.slice(0, 57)}...` : quote
+  if (!title && topic) title = topic.length > 60 ? `${topic.slice(0, 57)}...` : topic
   if (!title) return null
 
   const hot =
@@ -98,7 +98,7 @@ export function toInput(raw: Record<string, unknown>): ContentInput | null {
 
   return {
     title,
-    quote,
+    topic,
     script,
     status,
     pillar: str(raw.pillar).trim(),
